@@ -1,5 +1,3 @@
-Here’s an English version of your GitHub page introduction:
-
 ---
 
 # Welcome to My GitHub Page!
@@ -23,4 +21,3 @@ Make sure to check this page regularly for new scripts and projects! Enjoy explo
 
 ---
 
-This version highlights your scripts while providing clear instructions on how users can access and benefit from your work.
