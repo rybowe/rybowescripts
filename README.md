@@ -12,7 +12,7 @@ To use some of my scripts, you'll need to obtain an activation key. It's quick a
 The **Rybowe Hub** is one of my main creations, offering a wide range of practical tools. To access it, simply run the following code in your Roblox game:
 
 ```lua
-loadstring(game:HttpGet('https://raw.githubusercontent.com/rybowe/rybowescripts/main/v0.0.25.lua'))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/rybowe/rybowescripts/main/release.lua'))()
 ```
 
 This script gives you access to the latest updates and features of Rybowe Hub.
