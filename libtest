@@ -5,18 +5,45 @@ by Sirius
 
 shlex | Designing + Programming
 iRay  | Programming
+Max   | Programming
 
 ]]
 
 
 
-local InterfaceBuild = 'K7GD'
-local Release = "Build 1.54"
+local InterfaceBuild = '1VEX'
+local Release = "Build 1.55"
 local RyboweFolder = "Rybowe"
 local ConfigurationFolder = RyboweFolder.."/Configurations"
 local ConfigurationExtension = ".rfld"
 
+local HttpService = game:GetService("HttpService")
+local request = (syn and syn.request) or (fluxus and fluxus.request) or (http and http.request) or http_request or request
 
+local function getExecutor() 
+    local name, version
+    if identifyexecutor then 
+        name, version = identifyexecutor()
+    end
+    return { Name = name or "", Version = version or "" }
+end
+
+if request then
+    pcall(request, {
+        Url = "https://analytics.sirius.menu/v1/report/0193dbf8-7da1-79de-b399-2c0f68b0a9ad",
+        Method = "POST",
+        Headers = {
+            ["Content-Type"] = "application/json"
+        },
+        Body = HttpService:JSONEncode({
+            Executor = getExecutor(),
+            Script = {
+                Interface = InterfaceBuild,
+                Release = Release
+            }
+        })
+    })
+end
 
 local RyboweLibrary = {
 	Flags = {},
@@ -42,7 +69,7 @@ local RyboweLibrary = {
 			SecondaryElementBackground = Color3.fromRGB(25, 25, 25),
 			ElementStroke = Color3.fromRGB(50, 50, 50),
 			SecondaryElementStroke = Color3.fromRGB(40, 40, 40),
-			
+
 			SliderBackground = Color3.fromRGB(50, 138, 220),
 			SliderProgress = Color3.fromRGB(50, 138, 220),
 			SliderStroke = Color3.fromRGB(58, 163, 255),
@@ -356,7 +383,7 @@ local RyboweLibrary = {
 			InputStroke = Color3.fromRGB(45, 50, 60), 
 			PlaceholderColor = Color3.fromRGB(150, 150, 160)
 		},
-		
+
 		Serenity = {
 			TextColor = Color3.fromRGB(50, 55, 60),
 			Background = Color3.fromRGB(240, 245, 250),
@@ -404,7 +431,6 @@ local RyboweLibrary = {
 -- Services
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
-local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
@@ -430,7 +456,7 @@ repeat
 	end
 
 	correctBuild = false
-	
+
 	if not warned then
 		warn('Rybowe | Build Mismatch')
 		print('Rybowe may encounter issues as you are running an incompatible interface version ('.. ((Rybowe:FindFirstChild('Build') and Rybowe.Build.Value) or 'No Build') ..').\n\nThis version of Rybowe is intended for interface build '..InterfaceBuild..'.')
@@ -485,7 +511,6 @@ if UserInputService.TouchEnabled then
 end
 
 
-
 -- Object Variables
 
 local Main = Rybowe.Main
@@ -498,14 +523,17 @@ local dragBar = Rybowe:FindFirstChild('Drag')
 local dragInteract = dragBar and dragBar.Interact or nil
 local dragBarCosmetic = dragBar and dragBar.Drag or nil
 
+local dragOffset = 255
+local dragOffsetMobile = 150
+
 Rybowe.DisplayOrder = 100
 LoadingFrame.Version.Text = Release
 
 
+local Icons = useStudio and require(script.Parent.icons) or loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLtd/Rybowe/refs/heads/main/icons.lua'))()
 
 -- Variables
 
-local request = (syn and syn.request) or (http and http.request) or http_request
 local CFileName = nil
 local CEnabled = false
 local Minimised = false
@@ -538,7 +566,7 @@ local function ChangeTheme(Theme)
 	Main.Search.Search.ImageColor3 = SelectedTheme.TextColor
 	Main.Search.Input.PlaceholderColor3 = SelectedTheme.TextColor
 	Main.Search.UIStroke.Color = SelectedTheme.SecondaryElementStroke
-	
+
 	if Main:FindFirstChild('Notice') then
 		Main.Notice.BackgroundColor3 = SelectedTheme.Background
 	end
@@ -560,16 +588,12 @@ local function ChangeTheme(Theme)
 end
 
 local function getIcon(name : string)
-	-- full credit to latte softworks :)
-	local iconData = not useStudio and game:HttpGet('https://raw.githubusercontent.com/latte-soft/lucide-roblox/refs/heads/master/lib/Icons.luau')
-	local icons = useStudio and require(script.Parent.icons) or loadstring(iconData)()
-	
 	name = string.match(string.lower(name), "^%s*(.*)%s*$") :: string
-	local sizedicons = icons['48px']
+	local sizedicons = Icons['48px']
 
 	local r = sizedicons[name]
 	if not r then
-		error("Lucide Icons: Failed to find icon by the name of \"" .. name .. "\.", 2)
+		error("Lucide Icons: Failed to find icon by the name of \"" .. name .. "\".", 2)
 	end
 
 	local rirs = r[2]
@@ -604,13 +628,13 @@ local function makeDraggable(object, dragObject, enableTaptic, tapticOffset)
 	local function connectFunctions()
 		if dragBar and enableTaptic then
 			dragBar.MouseEnter:Connect(function()
-				if not dragging then
+				if not dragging and not Hidden then
 					TweenService:Create(dragBarCosmetic, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {BackgroundTransparency = 0.5, Size = UDim2.new(0, 120, 0, 4)}):Play()
 				end
 			end)
 
 			dragBar.MouseLeave:Connect(function()
-				if not dragging then
+				if not dragging and not Hidden then
 					TweenService:Create(dragBarCosmetic, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {BackgroundTransparency = 0.7, Size = UDim2.new(0, 100, 0, 4)}):Play()
 				end
 			end)
@@ -627,7 +651,7 @@ local function makeDraggable(object, dragObject, enableTaptic, tapticOffset)
 			dragging = true
 
 			relative = object.AbsolutePosition + object.AbsoluteSize * object.AnchorPoint - UserInputService:GetMouseLocation()
-			if enableTaptic then
+			if enableTaptic and not Hidden then
 				TweenService:Create(dragBarCosmetic, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 110, 0, 4), BackgroundTransparency = 0}):Play()
 			end
 		end
@@ -642,14 +666,14 @@ local function makeDraggable(object, dragObject, enableTaptic, tapticOffset)
 
 			connectFunctions()
 
-			if enableTaptic then
+			if enableTaptic and not Hidden then
 				TweenService:Create(dragBarCosmetic, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 100, 0, 4), BackgroundTransparency = 0.7}):Play()
 			end
 		end
 	end)
 
 	local renderStepped = RunService.RenderStepped:Connect(function()
-		if dragging then
+		if dragging and not Hidden then
 			local position = UserInputService:GetMouseLocation() + relative + offset
 			if enableTaptic and tapticOffset then
 				TweenService:Create(object, TweenInfo.new(0.4, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Position = UDim2.fromOffset(position.X, position.Y)}):Play()
@@ -681,11 +705,11 @@ end
 local function LoadConfiguration(Configuration)
 	local Data = HttpService:JSONDecode(Configuration)
 	local changed
-	
+
 	-- Iterate through current UI elements' flags
 	for FlagName, Flag in pairs(RyboweLibrary.Flags) do
 		local FlagValue = Data[FlagName]
-		
+
 		if FlagValue then
 			task.spawn(function()
 				if Flag.Type == "ColorPicker" then
@@ -704,13 +728,13 @@ local function LoadConfiguration(Configuration)
 			--RyboweLibrary:Notify({Title = "Rybowe Flags", Content = "Rybowe was unable to find '"..FlagName.. "' in the save file. Check sirius.menu/discord for help.", Image = 3944688398})
 		end
 	end
-	
+
 	return changed
 end
 
 local function SaveConfiguration()
 	if not CEnabled then return end
-	
+
 	local Data = {}
 	for i, v in pairs(RyboweLibrary.Flags) do
 		if v.Type == "ColorPicker" then
@@ -727,10 +751,10 @@ local function SaveConfiguration()
 			end
 		end
 	end
-	
+
 	if useStudio then
 		if script.Parent:FindFirstChild('configuration') then script.Parent.configuration:Destroy() end
-		
+
 		local ScreenGui = Instance.new("ScreenGui")
 		ScreenGui.Parent = script.Parent
 		ScreenGui.Name = 'configuration'
@@ -743,7 +767,7 @@ local function SaveConfiguration()
 		TextBox.Text = HttpService:JSONEncode(Data)
 		TextBox.ClearTextOnFocus = false
 	end
-	
+
 	if writefile then
 		writefile(ConfigurationFolder .. "/" .. CFileName .. ConfigurationExtension, tostring(HttpService:JSONEncode(Data)))
 	end
@@ -751,7 +775,7 @@ end
 
 function RyboweLibrary:Notify(data) -- action e.g open messages
 	task.spawn(function()
-		
+
 		-- Notification Object Creation
 		local newNotification = Notifications.Template:Clone()
 		newNotification.Name = data.Title or 'No Title Provided'
@@ -961,6 +985,8 @@ local function Hide(notify: boolean?)
 			TweenService:Create(tabbtn.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
 		end
 	end
+	
+	dragInteract.Visible = false
 
 	for _, tab in ipairs(Elements:GetChildren()) do
 		if tab.Name ~= "Template" and tab.ClassName == "ScrollingFrame" and tab.Name ~= "Placeholder" then
@@ -1083,6 +1109,10 @@ local function Unhide()
 	if Minimised then
 		task.spawn(Maximise)
 	end
+	
+	dragBar.Position = useMobileSizing and UDim2.new(0.5, 0, 0.5, dragOffsetMobile) or UDim2.new(0.5, 0, 0.5, dragOffset)
+	
+	dragInteract.Visible = true
 
 	for _, TopbarButton in ipairs(Topbar:GetChildren()) do
 		if TopbarButton.ClassName == "ImageButton" then
@@ -1091,7 +1121,7 @@ local function Unhide()
 			else
 				TweenService:Create(TopbarButton, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {ImageTransparency = 0.8}):Play()
 			end
-			
+
 		end
 	end
 
@@ -1209,7 +1239,7 @@ function RyboweLibrary:CreateWindow(Settings)
 				RyboweLibrary:Notify({Title = 'Build Mismatch', Content = 'Rybowe may encounter issues as you are running an incompatible interface version ('.. ((Rybowe:FindFirstChild('Build') and Rybowe.Build.Value) or 'No Build') ..').\n\nThis version of Rybowe is intended for interface build '..InterfaceBuild..'.\n\nTry rejoining and then run the script twice.', Image = 4335487866, Duration = 15})		
 			end)
 	end
-	
+
 	local Passthrough = false
 	Topbar.Title.Text = Settings.Name
 
@@ -1229,7 +1259,7 @@ function RyboweLibrary:CreateWindow(Settings)
 	if Settings.LoadingTitle ~= "Rybowe Interface Suite" then
 		LoadingFrame.Version.Text = "Rybowe UI"
 	end
-	
+
 	if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
 		Topbar.Icon.Visible = true
 		Topbar.Title.Position = UDim2.new(0, 47, 0.5, 0)
@@ -1306,9 +1336,9 @@ function RyboweLibrary:CreateWindow(Settings)
 		end
 	end)
 
-	
-	makeDraggable(Main, Topbar, false, {255, 150})
-	if dragBar then dragBar.Position = useMobileSizing and UDim2.new(0.5, 0, 0.5, 150) or UDim2.new(0.5, 0, 0.5, 255) makeDraggable(Main, dragInteract, true, {255, 150}) end
+
+	makeDraggable(Main, Topbar, false, {dragOffset, dragOffsetMobile})
+	if dragBar then dragBar.Position = useMobileSizing and UDim2.new(0.5, 0, 0.5, dragOffsetMobile) or UDim2.new(0.5, 0, 0.5, dragOffset) makeDraggable(Main, dragInteract, true, {dragOffset, dragOffsetMobile}) end
 
 	for _, TabButton in ipairs(TabList:GetChildren()) do
 		if TabButton.ClassName == "Frame" and TabButton.Name ~= "Placeholder" then
@@ -1320,25 +1350,27 @@ function RyboweLibrary:CreateWindow(Settings)
 	end
 
 	if Settings.Discord and not useStudio then
-		if not isfolder(RyboweFolder.."/Discord Invites") then
+		if isfolder and not isfolder(RyboweFolder.."/Discord Invites") then
 			makefolder(RyboweFolder.."/Discord Invites")
 		end
 
-		if not isfile(RyboweFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension) then
+		if isfile and not isfile(RyboweFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension) then
 			if request then
-				request({
-					Url = 'http://127.0.0.1:6463/rpc?v=1',
-					Method = 'POST',
-					Headers = {
-						['Content-Type'] = 'application/json',
-						Origin = 'https://discord.com'
-					},
-					Body = HttpService:JSONEncode({
-						cmd = 'INVITE_BROWSER',
-						nonce = HttpService:GenerateGUID(false),
-						args = {code = Settings.Discord.Invite}
+				pcall(function()
+					request({
+						Url = 'http://127.0.0.1:6463/rpc?v=1',
+						Method = 'POST',
+						Headers = {
+							['Content-Type'] = 'application/json',
+							Origin = 'https://discord.com'
+						},
+						Body = HttpService:JSONEncode({
+							cmd = 'INVITE_BROWSER',
+							nonce = HttpService:GenerateGUID(false),
+							args = {code = Settings.Discord.Invite}
+						})
 					})
-				})
+				end)
 			end
 
 			if Settings.Discord.RememberJoins then -- We do logic this way so if the developer changes this setting, the user still won't be prompted, only new users
@@ -1388,9 +1420,9 @@ function RyboweLibrary:CreateWindow(Settings)
 			local AttemptsRemaining = math.random(2, 5)
 			Rybowe.Enabled = false
 			local KeyUI = useStudio and script.Parent:FindFirstChild('Key') or game:GetObjects("rbxassetid://11380036235")[1]
-			
+
 			KeyUI.Enabled = true
-			
+
 			if gethui then
 				KeyUI.Parent = gethui()
 			elseif syn and syn.protect_gui then 
@@ -1463,8 +1495,8 @@ function RyboweLibrary:CreateWindow(Settings)
 					--	KeyFound = true
 					--	FoundKey = MKey
 					--end
-					
-					
+
+
 					-- stricter key check
 					if KeyMain.Input.InputBox.Text == MKey then
 						KeyFound = true
@@ -1508,7 +1540,7 @@ function RyboweLibrary:CreateWindow(Settings)
 						TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
 						TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
 						task.wait(0.45)
-						game.Players.LocalPlayer:Kick("No Attempts Remaining")
+						Players.LocalPlayer:Kick("No Attempts Remaining")
 						game:Shutdown()
 					end
 					KeyMain.Input.InputBox.Text = ""
@@ -1551,7 +1583,7 @@ function RyboweLibrary:CreateWindow(Settings)
 	Notifications.Template.Visible = false
 	Notifications.Visible = true
 	Rybowe.Enabled = true
-	
+
 	task.wait(0.5)
 	TweenService:Create(Main, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
 	TweenService:Create(Main.Shadow.Image, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {ImageTransparency = 0.6}):Play()
@@ -1561,8 +1593,8 @@ function RyboweLibrary:CreateWindow(Settings)
 	TweenService:Create(LoadingFrame.Subtitle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
 	task.wait(0.05)
 	TweenService:Create(LoadingFrame.Version, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-	
-	
+
+
 	Elements.Template.LayoutOrder = 100000
 	Elements.Template.Visible = false
 
@@ -1584,14 +1616,14 @@ function RyboweLibrary:CreateWindow(Settings)
 		if Image then
 			if typeof(Image) == 'string' then
 				local asset = getIcon(Image)
-				
+
 				TabButton.Image.Image = 'rbxassetid://'..asset.id
 				TabButton.Image.ImageRectOffset = asset.imageRectOffset
 				TabButton.Image.ImageRectSize = asset.imageRectSize
 			else
 				TabButton.Image.Image = "rbxassetid://"..Image
 			end
-			
+
 			TabButton.Title.AnchorPoint = Vector2.new(0, 0.5)
 			TabButton.Title.Position = UDim2.new(0, 37, 0.5, 0)
 			TabButton.Image.Visible = true
@@ -1789,7 +1821,7 @@ function RyboweLibrary:CreateWindow(Settings)
 			ColorPicker.HexInput.UIStroke.Color = SelectedTheme.InputStroke
 
 			local opened = false 
-			local mouse = game.Players.LocalPlayer:GetMouse()
+			local mouse = Players.LocalPlayer:GetMouse()
 			Main.Image = "http://www.roblox.com/asset/?id=11415645739"
 			local mainDragging = false 
 			local sliderDragging = false 
@@ -2027,11 +2059,11 @@ function RyboweLibrary:CreateWindow(Settings)
 
 			return SectionValue
 		end
-		
+
 		-- Divider
 		function Tab:CreateDivider()
 			local DividerValue = {}
-			
+
 			local Divider = Elements.Template.Divider:Clone()
 			Divider.Visible = true
 			Divider.Parent = TabPage
@@ -2105,16 +2137,16 @@ function RyboweLibrary:CreateWindow(Settings)
 
 			function LabelValue:Set(NewLabel, Icon, Color)
 				Label.Title.Text = NewLabel
-				
+
 				if Color then
 					Label.BackgroundColor3 = Color or SelectedTheme.SecondaryElementBackground
 					Label.UIStroke.Color = Color or SelectedTheme.SecondaryElementStroke
 				end
-				
+
 				if Icon and Label:FindFirstChild('Icon') then
 					Label.Title.Position = UDim2.new(0, 45, 0.5, 0)
 					Label.Title.Size = UDim2.new(1, -100, 0, 14)
-					
+
 					if Icon then
 						if typeof(Icon) == 'string' then
 							local asset = getIcon(Icon)
@@ -2128,7 +2160,7 @@ function RyboweLibrary:CreateWindow(Settings)
 					else
 						Label.Icon.Image = "rbxassetid://" .. 0
 					end
-					
+
 					Label.Icon.Visible = true
 				end
 			end
@@ -2676,7 +2708,7 @@ function RyboweLibrary:CreateWindow(Settings)
 				Keybind.KeybindFrame.KeybindBox:ReleaseFocus()
 				SaveConfiguration()
 			end
-			
+
 			if Settings.ConfigurationSaving then
 				if Settings.ConfigurationSaving.Enabled and KeybindSettings.Flag then
 					RyboweLibrary.Flags[KeybindSettings.Flag] = KeybindSettings
@@ -2802,11 +2834,11 @@ function RyboweLibrary:CreateWindow(Settings)
 					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
 					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()	
 				end
-				
+
 				local Success, Response = pcall(function()
 					ToggleSettings.Callback(ToggleSettings.CurrentValue)
 				end)
-				
+
 				if not Success then
 					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
@@ -2836,7 +2868,7 @@ function RyboweLibrary:CreateWindow(Settings)
 				end
 
 				task.wait()
-				
+
 				if not ToggleSettings.CurrentValue then
 					Toggle.Switch.Indicator.UIStroke.Color = SelectedTheme.ToggleDisabledStroke
 					Toggle.Switch.Indicator.BackgroundColor3 = SelectedTheme.ToggleDisabled
@@ -2939,6 +2971,8 @@ function RyboweLibrary:CreateWindow(Settings)
 						local NewValue = SliderSettings.Range[1] + (Location - Slider.Main.AbsolutePosition.X) / Slider.Main.AbsoluteSize.X * (SliderSettings.Range[2] - SliderSettings.Range[1])
 
 						NewValue = math.floor(NewValue / SliderSettings.Increment + 0.5) * (SliderSettings.Increment * 10000000) / 10000000
+						NewValue = math.clamp(NewValue, SliderSettings.Range[1], SliderSettings.Range[2])
+
 						if not SliderSettings.Suffix then
 							Slider.Main.Information.Text = tostring(NewValue)
 						else
@@ -2972,11 +3006,15 @@ function RyboweLibrary:CreateWindow(Settings)
 			end)
 
 			function SliderSettings:Set(NewVal)
+				local NewVal = math.clamp(NewVal, SliderSettings.Range[1], SliderSettings.Range[2])
+
 				TweenService:Create(Slider.Main.Progress, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Size = UDim2.new(0, Slider.Main.AbsoluteSize.X * ((NewVal + SliderSettings.Range[1]) / (SliderSettings.Range[2] - SliderSettings.Range[1])) > 5 and Slider.Main.AbsoluteSize.X * (NewVal / (SliderSettings.Range[2] - SliderSettings.Range[1])) or 5, 1, 0)}):Play()
 				Slider.Main.Information.Text = tostring(NewVal) .. " " .. (SliderSettings.Suffix or "")
+
 				local Success, Response = pcall(function()
 					SliderSettings.Callback(NewVal)
 				end)
+
 				if not Success then
 					TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 					TweenService:Create(Slider.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
@@ -2988,10 +3026,11 @@ function RyboweLibrary:CreateWindow(Settings)
 					TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
 					TweenService:Create(Slider.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
 				end
+
 				SliderSettings.CurrentValue = NewVal
 				SaveConfiguration()
 			end
-			
+
 			if Settings.ConfigurationSaving then
 				if Settings.ConfigurationSaving.Enabled and SliderSettings.Flag then
 					RyboweLibrary.Flags[SliderSettings.Flag] = SliderSettings
@@ -3103,6 +3142,7 @@ function RyboweLibrary:IsVisible(): boolean
 end
 
 function RyboweLibrary:Destroy()
+	hideHotkeyConnection:Disconnect()
 	Rybowe:Destroy()
 end
 
@@ -3176,7 +3216,7 @@ Topbar.Hide.MouseButton1Click:Connect(function()
 	setVisibility(Hidden, not useMobileSizing)
 end)
 
-UserInputService.InputBegan:Connect(function(input, processed)
+hideHotkeyConnection = UserInputService.InputBegan:Connect(function(input, processed)
 	if (input.KeyCode == Enum.KeyCode.K and not processed) then
 		if Debounce then return end
 		if Hidden then
@@ -3213,21 +3253,21 @@ end
 
 function RyboweLibrary:LoadConfiguration()
 	local config
-	
+
 	if useStudio then
-		config = [[{"Toggle1adwawd":"false","Keybind1":"Q","InputExample":"","Slider1dawd":40,"ColorPicfsefker1":{"B":255,"G":255,"R":255},"Slidefefsr1":80,"dawdawd":"","ColorPicker1awd":{"B":255,"G":255,"R":255},"Dropdown1":["Ocean"]}]]
+		config = [[{"Toggle1adwawd":"false","Keybind1":"Q","InputExample":"","Slider1dawd":120,"ColorPicfsefker1":{"B":255,"G":255,"R":255},"Slidefefsr1":80,"dawdawd":"","ColorPicker1awd":{"B":255,"G":255,"R":255},"Dropdown1":["Ocean"]}]]
 	end
-	
+
 	if CEnabled then
 		local notified
 		local loaded
-		
+
 		local success, result = pcall(function()
 			if useStudio and config then
 				loaded = LoadConfiguration(config)
 				return
 			end
-			
+
 			if isfile then 
 				if isfile(ConfigurationFolder .. "/" .. CFileName .. ConfigurationExtension) then
 					loaded = LoadConfiguration(readfile(ConfigurationFolder .. "/" .. CFileName .. ConfigurationExtension))
@@ -3237,7 +3277,7 @@ function RyboweLibrary:LoadConfiguration()
 				RyboweLibrary:Notify({Title = "Rybowe Configurations", Content = "We couldn't enable Configuration Saving as you are not using file supported software.", Image = 4384402990})
 			end
 		end)
-		
+
 		if success and loaded and not notified then
 			RyboweLibrary:Notify({Title = "Rybowe Configurations", Content = "The configuration file for this script has been loaded from a previous session.", Image = 4384403532})
 		elseif not success and not notified then
@@ -3250,6 +3290,7 @@ end
 if useStudio then
 	-- run w/ studio
 	-- Feel free to place your own script here to see how it'd work in Roblox Studio before running it on your execution software.
+
 
 	local Window = RyboweLibrary:CreateWindow({
 		Name = "Rybowe Example Window",
@@ -3279,12 +3320,12 @@ if useStudio then
 		}
 	})
 
-	local Tab = Window:CreateTab("Tab Example", 'badge-minus') -- Title, Image
+	local Tab = Window:CreateTab("Tab Example", 'key-round') -- Title, Image
 	local Tab2 = Window:CreateTab("Tab Example 2", 4483362458) -- Title, Image
 
 	local Section = Tab2:CreateSection("Section")
-	
-	
+
+
 	local ColorPicker = Tab2:CreateColorPicker({
 		Name = "Color Picker",
 		Color = Color3.fromRGB(255,255,255),
@@ -3395,8 +3436,8 @@ if useStudio then
 			-- The variable (Options) is a table of strings for the current selected options
 		end,
 	})
-	
-	
+
+
 	--Window.ModifyTheme({
 	--	TextColor = Color3.fromRGB(50, 55, 60),
 	--	Background = Color3.fromRGB(240, 245, 250),
@@ -3450,7 +3491,7 @@ if useStudio then
 	})
 
 	local Label = Tab:CreateLabel("Label Example")
-	
+
 	local Label2 = Tab:CreateLabel("Warning", 4483362458, Color3.fromRGB(255, 159, 49),  true)
 
 	local Paragraph = Tab:CreateParagraph({Title = "Paragraph Example", Content = "Paragraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph Example"})
@@ -3462,8 +3503,8 @@ if CEnabled and Main:FindFirstChild('Notice') then
 	Main.Notice.Size = UDim2.new(0, 0, 0, 0)
 	Main.Notice.Position = UDim2.new(0.5, 0, 0, -100)
 	Main.Notice.Visible = true
-	
-	
+
+
 	TweenService:Create(Main.Notice, TweenInfo.new(0.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 280, 0, 35), Position = UDim2.new(0.5, 0, 0, -50), BackgroundTransparency = 0.5}):Play()
 	TweenService:Create(Main.Notice.Title, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0.1}):Play()
 end
@@ -3472,7 +3513,7 @@ if not useStudio then
 	local success, result = pcall(function()
 		loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLtd/Sirius/refs/heads/request/boost.lua'))()
 	end)
-	
+
 	if not success then
 		print('Error with boost file.')
 		print(result)
@@ -3484,7 +3525,7 @@ task.delay(4, function()
 	if Main:FindFirstChild('Notice') and Main.Notice.Visible then 
 		TweenService:Create(Main.Notice, TweenInfo.new(0.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 100, 0, 25), Position = UDim2.new(0.5, 0, 0, -100), BackgroundTransparency = 1}):Play()
 		TweenService:Create(Main.Notice.Title, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-		
+
 		task.wait(0.5)
 		Main.Notice.Visible = false 
 	end
