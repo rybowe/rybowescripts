@@ -115,11 +115,11 @@ if not cachedSettings or not cachedSettings.System or not cachedSettings.System.
 	else
 		prompt.create(
 			'Sirius Analytics',
-	            [[Would you like to allow Rayfield (UI lib) to collect usage statistics?
+	            [[Would you like to allow Rayfield (UI library) to collect usage statistics?
 
 No data is linked to you or your personal activity.]],
-			'Continue',
-			'Cancel',
+			'yes',
+			'No (the script will run also)',
 			function(result)
 				settingsTable.System.analytics.Value = result
 				analytics = result
@@ -1335,7 +1335,7 @@ local function createSettings(window)
 		return
 	end
 	
-	local newTab = window:CreateTab('Rybowe Settings', 0, true)
+	local newTab = window:CreateTab('Rybowe Settings', "user-round-cog", true)
 
 	if TabList['Rybowe Settings'] then
 		TabList['Rybowe Settings'].LayoutOrder = 1000
