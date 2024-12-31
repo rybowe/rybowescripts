@@ -117,7 +117,9 @@ if not cachedSettings or not cachedSettings.System or not cachedSettings.System.
 			'Sirius Analytics',
 	            [[Would you like to allow Rayfield (UI library) to collect usage statistics?
 
-No data is linked to you or your personal activity.]],
+No data is linked to you or your personal activity.
+
+The Script will continue to RUN if you choose NO!]],
 			'YES',
 			'NO!',
 			function(result)
