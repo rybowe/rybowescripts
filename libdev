@@ -9,10 +9,12 @@
 
 ]]
 
+if debugX then
+	warn('Initialising Rybowe')
+end
 
-
-local InterfaceBuild = '9NBD'
-local Release = "Build 1.65"
+local InterfaceBuild = '3K3W'
+local Release = "Build 1.67"
 local RyboweFolder = "Rybowe"
 local ConfigurationFolder = RyboweFolder.."/Configurations"
 local ConfigurationExtension = ".rfld"
@@ -20,6 +22,9 @@ local settingsTable = {
 	General = {
 		-- if needs be in order just make getSetting(name)
 		rayfieldOpen = {Type = 'bind', Value = 'K', Name = 'Rybowe Keybind'},
+		-- buildwarnings
+		-- rayfieldprompts
+
 	},
 	System = {
 		usageAnalytics = {Type = 'toggle', Value = true, Name = 'Anonymised Analytics'},
@@ -37,6 +42,8 @@ local cachedSettings
 local prompt = useStudio and require(script.Parent.prompt) or loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLtd/Sirius/refs/heads/request/prompt.lua'))()
 local request = (syn and syn.request) or (fluxus and fluxus.request) or (http and http.request) or http_request or request
 
+
+
 local function loadSettings()
 	local file = nil
 
@@ -48,8 +55,8 @@ local function loadSettings()
 
 	-- for debug in studio
 	if useStudio then
-		wfile = [[
-		{"General":{"rayfieldOpen":{"Value":"K","Type":"bind","Name":"Rybowe Keybind","Element":{"HoldToInteract":false,"Name":"Rybowe Keybind","Set":null,"CallOnChange":true,"Callback":null,"CurrentKeybind":"K"}}},"System":{"usageAnalytics":{"Value":false,"Type":"toggle","Name":"Anonymised Analytics","Element":{"Ext":true,"Name":"Anonymised Analytics","Set":null,"CurrentValue":true,"Callback":null}}}}
+		file = [[
+		{"General":{"rayfieldOpen":{"Value":"K","Type":"bind","Name":"Rybowe Keybind","Element":{"HoldToInteract":false,"Ext":true,"Name":"Rybowe Keybind","Set":null,"CallOnChange":true,"Callback":null,"CurrentKeybind":"K"}}},"System":{"usageAnalytics":{"Value":false,"Type":"toggle","Name":"Anonymised Analytics","Element":{"Ext":true,"Name":"Anonymised Analytics","Set":null,"CurrentValue":false,"Callback":null}}}}
 	]]
 	end
 
@@ -85,7 +92,15 @@ local function loadSettings()
 	end
 end
 
+if debugX then
+	warn('Now Loading Settings Configuration')
+end
+
 loadSettings()
+
+if debugX then
+	warn('Settings Loaded')
+end
 
 --if not cachedSettings or not cachedSettings.System or not cachedSettings.System.usageAnalytics then
 --	local fileFunctionsAvailable = isfile and writefile and readfile
@@ -111,13 +126,40 @@ loadSettings()
 --	repeat task.wait() until analytics ~= nil
 --end
 
+if debugX then
+	warn('Querying Settings for Reporter Information')
+end
+
 if #cachedSettings == 0 or (cachedSettings.System and cachedSettings.System.usageAnalytics and cachedSettings.System.usageAnalytics.Value) then
 	if useStudio then
 		print('Sending analytics')
 	else
-		local reporter = loadstring(game:HttpGet("https://analytics.sirius.menu/reporter"))()
-		reporter.report("0193dbf8-7da1-79de-b399-2c0f68b0a9ad", Release, InterfaceBuild)
+		if debugX then
+			warn('Reporting Analytics')
+		end
+		task.spawn(function()
+			local success, reporter = pcall(function()
+				return loadstring(game:HttpGet("https://analytics.sirius.menu/reporter"))()
+			end)
+
+			if success and reporter then
+				pcall(function()
+					reporter.report("0193dbf8-7da1-79de-b399-2c0f68b0a9ad", Release, InterfaceBuild)
+				end)
+			else
+				warn("Failed to load or execute the reporter. \nPlease notify Rybowe developers at sirius.menu/discord.")
+			end
+		end)
+		
+		if debugX then
+			warn('Finished Report')
+		end
+
 	end
+end
+
+if debugX then
+	warn('Moving on to continue initialisation')
 end
 
 local RyboweLibrary = {
@@ -515,6 +557,7 @@ local Rybowe = useStudio and script.Parent:FindFirstChild('Rybowe') or game:GetO
 local buildAttempts = 0
 local correctBuild = false
 local warned
+local globalLoaded
 
 repeat
 	if Rybowe:FindFirstChild('Build') and Rybowe.Build.Value == InterfaceBuild then
@@ -773,14 +816,16 @@ local function UnpackColor(Color)
 end
 
 local function LoadConfiguration(Configuration)
-	local Data = HttpService:JSONDecode(Configuration)
+	local success, Data = pcall(function() return HttpService:JSONDecode(Configuration) end)
 	local changed
+	
+	if not success then warn('Rybowe had an issue decoding the configuration file, please try delete the file and reopen Rybowe.') return end
 
 	-- Iterate through current UI elements' flags
 	for FlagName, Flag in pairs(RyboweLibrary.Flags) do
 		local FlagValue = Data[FlagName]
 
-		if FlagValue then
+		if (typeof(FlagValue) == 'boolean' and FlagValue == false) or FlagValue then
 			task.spawn(function()
 				if Flag.Type == "ColorPicker" then
 					changed = true
@@ -803,7 +848,11 @@ local function LoadConfiguration(Configuration)
 end
 
 local function SaveConfiguration()
-	if not CEnabled then return end
+	if not CEnabled or not globalLoaded then return end
+	
+	if debugX then
+		print('Saving')
+	end
 
 	local Data = {}
 	for i, v in pairs(RyboweLibrary.Flags) do
@@ -836,6 +885,10 @@ local function SaveConfiguration()
 		TextBox.Position = UDim2.new(0.5, 0, 0, 30)
 		TextBox.Text = HttpService:JSONEncode(Data)
 		TextBox.ClearTextOnFocus = false
+	end
+	
+	if debugX then
+		warn(HttpService:JSONEncode(Data))
 	end
 
 	if writefile then
@@ -894,7 +947,7 @@ function RyboweLibrary:Notify(data) -- action e.g open messages
 
 		if data.Actions then
 			warn('Rybowe | Not seeing your actions in notifications?')
-			print("Notification Actions are being sunset for now, keep up to date on when they're back in the discord. (sirius.menu/discord)")
+			print("Notification Actions are being sunset for now, keep up to date on when they're back in the discord.")
 		end
 
 		-- Calculate textbounds and set initial values
@@ -1328,7 +1381,7 @@ local function createSettings(window)
 		return
 	end
 
-	local newTab = window:CreateTab('Rybowe Settings', "user-round-cog", true)
+	local newTab = window:CreateTab('Rybowe Settings', 0, true)
 
 	if TabList['Rybowe Settings'] then
 		TabList['Rybowe Settings'].LayoutOrder = 1000
@@ -1387,7 +1440,20 @@ local function createSettings(window)
 end
 
 
+
 function RyboweLibrary:CreateWindow(Settings)
+	if Rybowe:FindFirstChild('Loading') then
+		if getgenv and not getgenv().rayfieldCached then
+			Rybowe.Enabled = true
+			Rybowe.Loading.Visible = true
+
+			task.wait(1.4)
+			Rybowe.Loading.Visible = false
+		end
+	end
+	
+	if getgenv then getgenv().rayfieldCached = true end
+	
 	if not correctBuild and not Settings.DisableBuildWarnings then
 		task.delay(3, 
 			function() 
@@ -1466,9 +1532,9 @@ function RyboweLibrary:CreateWindow(Settings)
 			while true do
 				task.wait(math.random(180, 600))
 				RyboweLibrary:Notify({
-					Title = "Rybowe Interface",
-					Content = "Enjoying this UI library? Find it at sirius.menu/discord",
-					Duration = 7,
+					Title = "nah",
+					Content = "nah",
+					Duration = 0.001,
 					Image = 4370033185,
 				})
 			end
@@ -1917,7 +1983,7 @@ function RyboweLibrary:CreateWindow(Settings)
 					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
 				else
 					if not ButtonSettings.Ext then
-						SaveConfiguration()
+						SaveConfiguration(ButtonSettings.Name..'\n')
 					end
 					TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
 					TweenService:Create(Button.ElementIndicator, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
@@ -2084,7 +2150,7 @@ function RyboweLibrary:CreateWindow(Settings)
 				local r,g,b = math.floor((h*255)+0.5),math.floor((s*255)+0.5),math.floor((v*255)+0.5)
 				ColorPickerSettings.Color = Color3.fromRGB(r,g,b)
 				if not ColorPickerSettings.Ext then
-					SaveConfiguration()
+					SaveConfiguration(ColorPickerSettings.Flag..'\n'..tostring(ColorPickerSettings.Color))
 				end
 			end)
 			--RGB
@@ -2443,6 +2509,12 @@ function RyboweLibrary:CreateWindow(Settings)
 
 			function InputSettings:Set(text)
 				Input.InputFrame.InputBox.Text = text
+				InputSettings.CurrentValue = text
+				
+				local Success, Response = pcall(function()
+					InputSettings.Callback(text)
+				end)
+				
 				if not InputSettings.Ext then
 					SaveConfiguration()
 				end
@@ -3479,11 +3551,16 @@ for _, TopbarButton in ipairs(Topbar:GetChildren()) do
 	end
 end
 
+
 function RyboweLibrary:LoadConfiguration()
 	local config
+	
+	if debugX then
+		warn('Loading Configuration')
+	end
 
 	if useStudio then
-		config = [[{"Toggle1adwawd":true,"Keybind1":"B","InputExample":"","Slider1dawd":120,"ColorPicfsefker1":{"B":255,"G":255,"R":255},"Slidefefsr1":80,"dawdawd":"","ColorPicker1awd":{"B":255,"G":255,"R":255},"Dropdown1":["Ocean"]}]]
+		config = [[{"Toggle1adwawd":true,"ColorPicker1awd":{"B":255,"G":255,"R":255},"Slider1dawd":100,"ColorPicfsefker1":{"B":255,"G":255,"R":255},"Slidefefsr1":80,"dawdawd":"","Input1":"hh","Keybind1":"B","Dropdown1":["Ocean"]}]]
 	end
 
 	if CEnabled then
@@ -3502,7 +3579,7 @@ function RyboweLibrary:LoadConfiguration()
 				end
 			else
 				notified = true
-				RyboweLibrary:Notify({Title = "Rybowe Configurations", Content = "We couldn't enable Configuration Saving as you are not using file supported software.", Image = 4384402990})
+				RyboweLibrary:Notify({Title = "Rybowe Configurations", Content = "We couldn't enable Configuration Saving as you are not using software with filesystem support.", Image = 4384402990})
 			end
 		end)
 
@@ -3513,7 +3590,11 @@ function RyboweLibrary:LoadConfiguration()
 			RyboweLibrary:Notify({Title = "Rybowe Configurations", Content = "We've encountered an issue loading your configuration correctly.\n\nCheck the Developer Console for more information.", Image = 4384402990})
 		end
 	end
+
+	globalLoaded = true
 end
+
+
 
 if useStudio then
 	-- run w/ studio
@@ -3637,10 +3718,10 @@ if useStudio then
 
 	local Input = Tab:CreateInput({
 		Name = "Input Example",
-		CurrentValue = "",
+		CurrentValue = "Helo",
 		PlaceholderText = "Adaptive Input",
 		RemoveTextAfterFocusLost = false,
-		Flag = 'InputExample',
+		Flag = 'Input1',
 		Callback = function(Text)
 			-- The function that takes place when the input is changed
 			-- The variable (Text) is a string for the value in the text box
