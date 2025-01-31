@@ -6,7 +6,7 @@ Here, I regularly release my Roblox scripts, featuring advanced tools and functi
 
 ### How to Get Your Key
 To use some of my scripts, you'll need to obtain an activation key. It's quick and easy! Just follow this link to get your key:  
-[Get My Key](https://linkvertise.com/1191186/aim-bot-roblox-script?o=sharing)
+[Get My Key](https://rybowe-key-api.vercel.app)
 
 ### Rybowe Hub
 The **Rybowe Hub** is one of my main creations, offering a wide range of practical tools. To access it, simply run the following code in your Roblox game:
