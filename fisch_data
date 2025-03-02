@@ -35,6 +35,6 @@ return {
         ["Desolate Deep"] = {},
         ["Mushgrove"] = {},
         ["Golden Tide"] = {},
-        ["Atlantis"] = {}
+        ["Atlantis"] = {},
     },
 }
