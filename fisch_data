@@ -212,4 +212,11 @@ return {
         ["Candy Cane Rod"] = { Price = "inf" },
         ["North-Star Rod"] = { Price = "inf" },
     },
+   SkinCrates = {
+        ["Ancient"] = { Price = "175000" },
+        ["Marianaâ€™s"] = { Price = "700000" },
+        ["Moosewood"] = { Price = "25000" },
+        ["Desolate"] = { Price = "75000" },
+        ["Atlantis"] = { Price = "250000" },
+    },
 }
