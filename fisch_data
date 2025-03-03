@@ -37,7 +37,18 @@ return {
         ["Golden Tide"] = {},
         ["Atlantis"] = {},
     },
-
+  Codes = {
+        ["ATLANTEANSTORM"] = {},
+        ["MERRYFISCHMAS"] = {},
+        ["GOLDENTIDE"] = {},
+        ["FISCHMASDAY"] = {},
+        ["NorthernExpedition"] = {},
+        ["SORRYGUYS"] = {},
+        ["RFG"] = {},
+        ["CARBON"] = {},
+        ["NewYear"] = {},
+        ["THEKRAKEN"] = {},
+    },
    Items = {
         ["Windset Totem"] = { Price = "2000", Type = "Item" },
         ["Tidebreaker"] = { Price = "80000", Type = "Item" },
