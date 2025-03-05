@@ -56,7 +56,7 @@ return {
         ["Magic Thread"] = { Price = "inf", Type = "Item" },
         ["Metal Panels"] = { Price = "inf", Type = "Item" },
         ["Flippers"] = { Price = "9000", Type = "Item" },
-        ["Red Energy Crystal"] = { Price = "25", Type = "Fish" },
+        ["Red Energy Crystal"] = { Price = "250000", Type = "Fish" },
         ["Drill"] = { Price = "inf", Type = "Item" },
         ["Basic Diving Gear"] = { Price = "3000", Type = "Item" },
         ["Crossbow Base"] = { Price = "inf", Type = "Item" },
