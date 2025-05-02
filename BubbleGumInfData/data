@@ -6,5 +6,6 @@ return {
     easter = {},
     thanks = {},
     throwback = {},
+    Whoops = {},
   },
 }
