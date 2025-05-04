@@ -4,8 +4,7 @@ return {
     release = {},
     update2 = {},
     easter = {},
-    thanks = {},
-    throwback = {},
-    Whoops = {},
+    update3 = {},
+    sylentlyssorry = {},
   },
 }
