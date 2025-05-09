@@ -7,6 +7,9 @@ return {
     update3 = {},
     sylentlyssorry = {},
   },
+  RiftDebug  = {
+    Egg1 = "test",
+  },
   PetsImages = {
     ["Emerald Golem"] = "https://static.wikia.nocookie.net/bgs-infinity/images/8/8f/Emerald_Golem.png/revision/latest?cb=20250412234012",
     ["Inferno Dragon"] = "https://static.wikia.nocookie.net/bgs-infinity/images/0/06/Inferno_Dragon.png/revision/latest?cb=20250412205317",
