@@ -10,6 +10,7 @@ return {
 
     RiftDebug = {
         ["underworld-1"] = "Underworld Egg",
+        ["underworld-2"] = "Underworld Egg",
     },
 
     PetsImages = {
