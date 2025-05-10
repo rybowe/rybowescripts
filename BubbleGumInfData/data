@@ -8,7 +8,7 @@ return {
     sylentlyssorry = {},
   },
   RiftDebug  = {
-    Egg1 = "test",
+    underworld-1 = "Underworld Egg",
   },
   PetsImages = {
     ["Emerald Golem"] = "https://static.wikia.nocookie.net/bgs-infinity/images/8/8f/Emerald_Golem.png/revision/latest?cb=20250412234012",
