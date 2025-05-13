@@ -1,9 +1,7 @@
 return {
     Codes = {
         lucky = {},
-        release = {},
         update2 = {},
-        easter = {},
         update3 = {},
         sylentlyssorry = {},
     },
