@@ -67,5 +67,12 @@ return {
         ["Moonlight"] = "https://static.wikia.nocookie.net/bgs-infinity/images/1/10/Moonlight.png/revision/latest?cb=20250504230656",
         ["Luminosity"] = "https://static.wikia.nocookie.net/bgs-infinity/images/a/a0/Luminosity.png/revision/latest?cb=20250504212854",
         ["Flying Gem"] = "https://static.wikia.nocookie.net/bgs-infinity/images/1/1a/Flying_Gem.png/revision/latest?cb=20250414215335",
+        ["Queen Kitty"] = "https://static.wikia.nocookie.net/bgs-infinity/images/a/ad/Queen_Kitty.png/revision/latest?cb=20250510195237",
+        ["D0GGY1337"] = "https://static.wikia.nocookie.net/bgs-infinity/images/d/d4/D0GGY1337.png/revision/latest?cb=20250510203413",
+        ["Prophet"] = "https://static.wikia.nocookie.net/bgs-infinity/images/4/4a/Prophet.png/revision/latest?cb=20250510202646",
+        ["Wolford"] = "https://static.wikia.nocookie.net/bgs-infinity/images/e/ec/Wolflord.png/revision/latest?cb=20250510203009",
+        ["Corrupt Glitch"] = "https://static.wikia.nocookie.net/bgs-infinity/images/f/f3/Corrupt_Glitch.png/revision/latest?cb=20250510203342",
+        ["Darkness Creature"] = "https://static.wikia.nocookie.net/bgs-infinity/images/d/d0/Darkness_Creature.png/revision/latest?cb=20250510195526",
+        ["Prismatic"] = "https://static.wikia.nocookie.net/bgs-infinity/images/1/10/Prismatic.png/revision/latest?cb=20250510195315",
     }
 }
