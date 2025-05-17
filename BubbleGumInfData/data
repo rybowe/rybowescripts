@@ -76,5 +76,15 @@ return {
         ["Crimson Butterfly"] = "https://static.wikia.nocookie.net/bgs-infinity/images/b/b9/Crimson_Butterfly.png/revision/latest?cb=20250510195131",
         ["Crimson Bloodmoon"] = "https://static.wikia.nocookie.net/bgs-infinity/images/8/84/Crimson_Bloodmoon.png/revision/latest?cb=20250510194930",
         ["Lord Shock"] = "https://static.wikia.nocookie.net/bgs-infinity/images/d/d3/Lord_Shock.png/revision/latest?cb=20250510202826",
+        ["Hyperwave Kitty"] = "https://static.wikia.nocookie.net/bgs-infinity/images/0/05/Hyperwave_Kitty.png/revision/latest?cb=20250517194929",
+        ["Equalizer"] = "https://static.wikia.nocookie.net/bgs-infinity/images/9/96/Equalizer.png/revision/latest?cb=20250517192215",
+        ["Neon Wire Eye"] = "https://static.wikia.nocookie.net/bgs-infinity/images/b/bb/Neon_Wire_Eye.png/revision/latest?cb=20250517221451",
+        ["Neon Wyvern"] = "https://static.wikia.nocookie.net/bgs-infinity/images/d/d1/Neon_Wyvern.png/revision/latest?cb=20250517192602",
+        ["Noctis"] = "https://static.wikia.nocookie.net/bgs-infinity/images/a/a6/Noctis.png/revision/latest?cb=20250517201942",
+        ["Bongo Kitty"] = "https://static.wikia.nocookie.net/bgs-infinity/images/a/a2/Bongo_Kitty.png/revision/latest?cb=20250517201921",
+        ["Water Serpent"] = "https://static.wikia.nocookie.net/bgs-infinity/images/a/a0/Water_Serpent.png/revision/latest?cb=20250517205905",
+        ["Fire Guardian"] = "https://static.wikia.nocookie.net/bgs-infinity/images/1/12/Fire_Guardian.png/revision/latest?cb=20250517210738",
+        ["Royal Guardian"] = "https://static.wikia.nocookie.net/bgs-infinity/images/5/57/Royal_Guardian.png/revision/latest?cb=20250517194002",
+        ["Ring Master"] = "https://static.wikia.nocookie.net/bgs-infinity/images/b/bd/Ring_Master.png/revision/latest?cb=20250517205452",
     }
 }
