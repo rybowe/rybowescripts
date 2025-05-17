@@ -72,5 +72,9 @@ return {
         ["Corrupt Glitch"] = "https://static.wikia.nocookie.net/bgs-infinity/images/f/f3/Corrupt_Glitch.png/revision/latest?cb=20250510203342",
         ["Darkness Creature"] = "https://static.wikia.nocookie.net/bgs-infinity/images/d/d0/Darkness_Creature.png/revision/latest?cb=20250510195526",
         ["Prismatic"] = "https://static.wikia.nocookie.net/bgs-infinity/images/1/10/Prismatic.png/revision/latest?cb=20250510195315",
+        ["Demonweb"] = "https://static.wikia.nocookie.net/bgs-infinity/images/f/fd/Demonweb.png/revision/latest?cb=20250510195456",
+        ["Crimson Butterfly"] = "https://static.wikia.nocookie.net/bgs-infinity/images/b/b9/Crimson_Butterfly.png/revision/latest?cb=20250510195131",
+        ["Crimson Bloodmoon"] = "https://static.wikia.nocookie.net/bgs-infinity/images/8/84/Crimson_Bloodmoon.png/revision/latest?cb=20250510194930",
+        ["Lord Shock"] = "https://static.wikia.nocookie.net/bgs-infinity/images/d/d3/Lord_Shock.png/revision/latest?cb=20250510202826",
     }
 }
