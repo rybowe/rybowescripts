@@ -1,15 +1,17 @@
 return {
     Codes = {
+        release = {},
         lucky = {},
         update2 = {},
         update3 = {},
         update4 = {},
+        update5 = {},
+        easter = {},
         sylentlyssorry = {},
     },
 
     RiftDebug = {
         ["underworld-1"] = "Underworld Egg",
-        ["underworld-2"] = "Underworld Egg",
     },
 
     PetsImages = {
@@ -87,5 +89,13 @@ return {
         ["Fire Guardian"] = "https://static.wikia.nocookie.net/bgs-infinity/images/1/12/Fire_Guardian.png/revision/latest?cb=20250517210738",
         ["Royal Guardian"] = "https://static.wikia.nocookie.net/bgs-infinity/images/5/57/Royal_Guardian.png/revision/latest?cb=20250517194002",
         ["Ring Master"] = "https://static.wikia.nocookie.net/bgs-infinity/images/b/bd/Ring_Master.png/revision/latest?cb=20250517205452",
+        ["Dreamscape"] = "https://static.wikia.nocookie.net/bgs-infinity/images/1/1b/Dreamscape.png/revision/latest?cb=20250525200957",
+        ["Rigby"] = "https://static.wikia.nocookie.net/bgs-infinity/images/d/dd/Rigby.png/revision/latest?cb=20250525191526",
+        ["Beelzebub"] = "https://static.wikia.nocookie.net/bgs-infinity/images/b/bf/Beelzebub.png/revision/latest?cb=20250526014647",
+        ["Overlord Plushie"] = "https://static.wikia.nocookie.net/bgs-infinity/images/7/73/Overlord_Plushie.png/revision/latest?cb=20250525204216",
+        ["Everblaze"] = "https://static.wikia.nocookie.net/bgs-infinity/images/1/1b/Everblaze.png/revision/latest?cb=20250526014714",
+        ["Runic Defender"] = "https://static.wikia.nocookie.net/bgs-infinity/images/8/84/Runic_Defender.png/revision/latest?cb=20250525222256",
+        ["Glyph Warrior"] = "https://static.wikia.nocookie.net/bgs-infinity/images/e/ea/Glyph_Warrior.png/revision/latest?cb=20250525222926",
+        ["Sir Doggyton"] = "https://static.wikia.nocookie.net/bgs-infinity/images/7/72/Sir_Doggyton.png/revision/latest?cb=20250511040738",
     }
 }
