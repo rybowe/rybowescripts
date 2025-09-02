@@ -803,7 +803,7 @@ end
 
 local function getIcon(name : string): {id: number, imageRectSize: Vector2, imageRectOffset: Vector2}
 	if not Icons then
-		warn("Lucide Icons: Cannot use icons as icons library is not loaded")
+		warn("Lucide Icons: Cannot use icons as icons library is not loaded (2)")
 		return
 	end
 	name = string.match(string.lower(name), "^%s*(.*)%s*$") :: string
